@@ -988,7 +988,7 @@ class BasketTest(APITest):
         self.response = self.get('http://localhost:8000/api/options/')
         option_url = self.response.json()[0]['url']
 
-        # add the option to the basket line, but without a value
+        # add the option to the basket line
         self.response = self.post(
             'api-basket-add-product',
             url="http://testserver/api/products/1/",
@@ -999,10 +999,8 @@ class BasketTest(APITest):
         )
         self.response.assertStatusEqual(200)
 
-        self.response = self.get('api-basket')
-        self.response.assertStatusEqual(200)
-
         # Get the basket line, and see our option is there
+        self.response = self.get('api-basket')
         basket_line_url = self.get(self.response['lines']).data[0]['url']
         self.response = self.get(basket_line_url)
         attribute = self.response.json()['attributes'][0]
@@ -1012,6 +1010,7 @@ class BasketTest(APITest):
         self.response = self.put(attribute['url'], value='blue')
         self.response.assertStatusEqual(200)
 
+        # check that it's updated
         self.response = self.get(basket_line_url)
         attribute = self.response.json()['attributes'][0]
         self.assertEqual(attribute['value'], 'blue')
