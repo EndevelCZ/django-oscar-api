@@ -19,4 +19,5 @@ sandbox/static/
 docs/build/
 demosite/images
 demosite/cache
-demosite/*.sqlite
+demosite/*.sqlite/.idea/django-oscar-api.iml
+.idea
