@@ -1,4 +1,7 @@
 import logging
+
+from oscar.core.compat import AUTH_USER_MODEL
+from oscarapi.custom.fields import OscarHyperlinkedUserRelatedField
 from rest_framework import serializers
 
 from oscarapi.basket import operations
@@ -61,6 +64,8 @@ class BasketSerializer(serializers.HyperlinkedModelSerializer):
         max_digits=12, required=False)
     currency = serializers.CharField(required=False)
     voucher_discounts = VoucherDiscountSerializer(many=True, required=False)
+
+    owner = OscarHyperlinkedUserRelatedField(allow_null=True, label=_('Owner'), required=False)
 
     class Meta:
         model = Basket
