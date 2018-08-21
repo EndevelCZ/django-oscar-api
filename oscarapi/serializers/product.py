@@ -1,13 +1,13 @@
+from oscarapi.serializers import checkout
 from rest_framework import serializers
 from django.utils.translation import ugettext as _
 
 from oscarapi.utils import (
     OscarModelSerializer,
     overridable,
-    OscarHyperlinkedModelSerializer
+    OscarHyperlinkedModelSerializer,
 )
-from oscar.core.loading import get_model
-
+from oscar.core.loading import get_model, get_class
 
 Product = get_model('catalogue', 'Product')
 ProductClass = get_model('catalogue', 'ProductClass')
@@ -18,6 +18,7 @@ AttributeOption = get_model('catalogue', 'AttributeOption')
 ProductImage = get_model('catalogue', 'ProductImage')
 Option = get_model('catalogue', 'Option')
 Partner = get_model('partner', 'Partner')
+Selector = get_class('partner.strategy', 'Selector')
 
 
 class PartnerSerializer(OscarModelSerializer):
@@ -126,7 +127,7 @@ class BaseProductSerializer(OscarModelSerializer):
         model = Product
 
 
-class ChildProductserializer(BaseProductSerializer):
+class ChildProductSerializer(BaseProductSerializer):
     parent = serializers.HyperlinkedRelatedField(
         view_name='product-detail', queryset=Product.objects)
     # the below fields can be filled from the parent product if enabled.
@@ -148,7 +149,10 @@ class ChildProductserializer(BaseProductSerializer):
 
 class ProductSerializer(BaseProductSerializer):
     images = ProductImageSerializer(many=True, required=False)
-    children = ChildProductserializer(many=True, required=False)
+    children = ChildProductSerializer(many=True, required=False)
+    primary_image = ProductImageSerializer(required=True)
+    availability = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
 
     class Meta(BaseProductSerializer.Meta):
         fields = overridable(
@@ -158,14 +162,36 @@ class ProductSerializer(BaseProductSerializer):
                 'date_created', 'date_updated', 'recommended_products',
                 'attributes', 'categories', 'product_class',
                 'stockrecords', 'images', 'price', 'availability', 'options',
-                'children'))
+                'children', 'primary_image'))
+
+    def get_price(self, obj):
+        request = self.context.get("request")
+        strategy = Selector().strategy(
+            request=request, user=request.user)
+
+        ser = checkout.PriceSerializer(
+            strategy.fetch_for_product(obj).price,
+            context={'request': request})
+
+        return ser.data
+
+    def get_availability(self, obj):
+        request = self.context.get("request")
+        strategy = Selector().strategy(
+            request=request, user=request.user)
+
+        ser = AvailabilitySerializer(
+            strategy.fetch_for_product(obj).availability,
+            context={'request': request})
+
+        return ser.data
 
 
 class ProductLinkSerializer(ProductSerializer):
     class Meta(BaseProductSerializer.Meta):
         fields = overridable(
             'OSCARAPI_PRODUCT_FIELDS', default=(
-                'url', 'id', 'upc', 'title'
+                'url', 'id', 'upc', 'title', 'primary_image', 'price', 'availability',
             ))
 
 
