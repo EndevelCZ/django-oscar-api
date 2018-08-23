@@ -80,7 +80,9 @@ class ProductAttributeSerializer(OscarModelSerializer):
             default=('name', 'productattributevalue_set'))
 
 
-class ProductImageSerializer(OscarModelSerializer):
+class ProductImageSerializer(OscarModelSerializer): 
+    thumbnail = serializers.ImageField()
+
     class Meta:
         model = ProductImage
         fields = '__all__'
