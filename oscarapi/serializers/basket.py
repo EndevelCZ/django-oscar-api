@@ -64,6 +64,8 @@ class BasketSerializer(serializers.HyperlinkedModelSerializer):
         max_digits=12, required=False)
     currency = serializers.CharField(required=False)
     voucher_discounts = VoucherDiscountSerializer(many=True, required=False)
+    num_items = serializers.IntegerField()
+    num_lines = serializers.IntegerField()
 
     owner = OscarHyperlinkedUserRelatedField(allow_null=True, label=_('Owner'), required=False)
 
@@ -74,7 +76,7 @@ class BasketSerializer(serializers.HyperlinkedModelSerializer):
             'url', 'total_excl_tax',
             'total_excl_tax_excl_discounts', 'total_incl_tax',
             'total_incl_tax_excl_discounts', 'total_tax', 'currency',
-            'voucher_discounts', 'offer_discounts', 'is_tax_known'))
+            'voucher_discounts', 'offer_discounts', 'is_tax_known', 'num_lines', 'num_items'))
 
     def get_validation_exclusions(self, instance=None):
         """
