@@ -1,5 +1,7 @@
 import functools
 import itertools
+
+from rest_framework.views import APIView
 from six.moves import map
 
 from django.contrib import auth
@@ -23,6 +25,7 @@ __all__ = (
     'OptionList', 'OptionDetail',
     'CountryList', 'CountryDetail',
     'PartnerList', 'PartnerDetail',
+    'SessionView'
 )
 
 Basket = get_model('basket', 'Basket')
@@ -125,3 +128,13 @@ class PartnerList(generics.ListAPIView):
 class PartnerDetail(generics.RetrieveAPIView):
     queryset = Partner.objects.all()
     serializer_class = serializers.PartnerSerializer
+
+
+class SessionView(APIView):
+    def get(self, request, format=None):
+        if request.session.session_key is None:
+            request.session.create()
+
+        return Response({
+            'session_key': request.session.session_key
+        })

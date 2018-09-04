@@ -7,6 +7,7 @@ from oscarapi import views
 urlpatterns = [
     url(r'^$', views.api_root, name='api-root'),
     url(r'^login/$', views.LoginView.as_view(), name='api-login'),
+    url(r'^session/$', views.SessionView.as_view(), name='api-session'),
     url(r'^basket/$', views.BasketView.as_view(), name='api-basket'),
     url(r'^basket/add-product/$', views.AddProductView.as_view(), name='api-basket-add-product'),
     url(r'^basket/add-voucher/$', views.AddVoucherView.as_view(), name='api-basket-add-voucher'),
