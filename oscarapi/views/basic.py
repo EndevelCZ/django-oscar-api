@@ -136,5 +136,5 @@ class SessionView(APIView):
             request.session.create()
 
         return Response({
-            'session_key': request.session.session_key
+            'session_id': request.session.session_key
         })
