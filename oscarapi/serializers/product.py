@@ -160,7 +160,7 @@ class ProductSerializer(BaseProductSerializer):
         fields = overridable(
             'OSCARAPI_PRODUCTDETAIL_FIELDS',
             default=(
-                'url', 'upc', 'id', 'title', 'description', 'structure',
+                'url', 'upc', 'id', 'slug', 'title', 'description', 'structure',
                 'date_created', 'date_updated', 'recommended_products',
                 'attributes', 'categories', 'product_class',
                 'stockrecords', 'images', 'price', 'availability', 'options',
@@ -193,7 +193,7 @@ class ProductLinkSerializer(ProductSerializer):
     class Meta(BaseProductSerializer.Meta):
         fields = overridable(
             'OSCARAPI_PRODUCT_FIELDS', default=(
-                'url', 'id', 'upc', 'title', 'primary_image', 'price', 'availability',
+                'url', 'id', 'upc', 'title', 'slug', 'primary_image', 'price', 'availability',
             ))
 
 

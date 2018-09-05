@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.urls import path
 
 from rest_framework.urlpatterns import format_suffix_patterns
 
@@ -22,6 +23,7 @@ urlpatterns = [
     url(r'^lineattributes/(?P<pk>[0-9]+)/$', views.LineAttributeDetail.as_view(), name='lineattribute-detail'),
     url(r'^products/$', views.ProductList.as_view(), name='product-list'),
     url(r'^products/(?P<pk>[0-9]+)/$', views.ProductDetail.as_view(), name='product-detail'),
+    path('products/<slug:slug>/', views.ProductDetail.as_view(), name='product-detail-slug'),
     url(r'^products/(?P<pk>[0-9]+)/price/$', views.ProductPrice.as_view(), name='product-price'),
     url(r'^products/(?P<pk>[0-9]+)/availability/$', views.ProductAvailability.as_view(), name='product-availability'),
     url(r'^products/(?P<pk>[0-9]+)/stockrecords/$', views.StockRecordList.as_view(), name='product-stockrecord-list'),

@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from oscar.core.loading import get_class, get_model
@@ -42,6 +43,23 @@ class ProductList(generics.ListAPIView):
 class ProductDetail(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = serializers.ProductSerializer
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        if 'slug' in self.kwargs:
+            filter_kwargs = {'slug': self.kwargs['slug']}
+        elif 'pk' in self.kwargs:
+            filter_kwargs = {'pk': self.kwargs['pk']}
+        else:
+            raise AssertionError('View didn\'t receive slug or pk kwargs.')
+
+        obj = get_object_or_404(queryset, **filter_kwargs)
+
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+
+        return obj
 
 
 class ProductPrice(generics.RetrieveAPIView):
